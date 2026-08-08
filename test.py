@@ -7,4 +7,7 @@ router = {
 }
 connection = ConnectHandler(**router)
 print(connection.send_command("/system identity print"))
+command = ["/interface print", "/ip address print", "/ip route print", "/ip arp print", "/ip firewall filter print"]
+for cmd in command:
+    print(connection.send_command(cmd))
 connection.disconnect()
