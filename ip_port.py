@@ -13,5 +13,4 @@ data = {
     'ip_address': '192.168.23.1/24',
     'port': 'ether5'  
     }
-for key, value in data.items():
-    print(connection.send_command(f"/ip address add address={data['ip_address']}, interface={data['port']}"))
+print(connection.send_command(f"/ip address add address={data['ip_address']}, interface={data['port']}"))
