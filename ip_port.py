@@ -10,7 +10,7 @@ connection = ConnectHandler(**router)
 print(connection.send_command("/system identity print"))
 
 data = {
-    'ip_address': '192.168.23.1/24',
+    'ip_address': '192.168.23.1',
     'port': 'ether5'  
     }
-print(connection.send_command(f"/ip address add address={data['ip_address']}, interface={data['port']}"))
+print(connection.send_command(f"/ip address add address={data['ip_address']}/24, interface={data['port']}"))
