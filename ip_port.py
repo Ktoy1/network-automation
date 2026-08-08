@@ -17,4 +17,4 @@ data = {
 }
 
 print(connection.send_command(
-    f"/ip address add address={data['ip_address']} interface={data['port']}"
+    f"/ip address add address={data['ip_address']} interface={data['port']}"))
