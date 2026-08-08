@@ -1,6 +1,6 @@
 from netmiko import ConnectHandler
 router = {
-    'device_type': 'miktotik_routeros',
+    'device_type': 'mikrotik_routeros',
     'host': '192.168.24.11',
     'username': 'admin',
     'password': '123456'
