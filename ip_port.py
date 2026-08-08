@@ -13,4 +13,4 @@ data = {
     'ip_address': '192.168.23.1',
     'port': 'ether5'  
     }
-print(connection.send_command(f"/ip address add address={data['ip_address']}/24, interface={data['port']}"))
+print(connection.send_command(f"/ip address add address={data['ip_address']}/int(24), interface={data['port']}"))
