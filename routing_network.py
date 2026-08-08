@@ -14,7 +14,7 @@ router_2 = {'device_type': 'mikrotik_routeros',
 
 for i in range(1, 3):
     if i == 1:
-        connection = ConnectHandler(router_1)
+        connection = ConnectHandler(**router_1)
         print(connection.send_command("/system identity print"))
     else:
         connection = ConnectHandler(**router_2)
