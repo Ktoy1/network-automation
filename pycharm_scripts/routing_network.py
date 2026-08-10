@@ -18,17 +18,17 @@ class RoutersSSH:
 
 class IPAddress:
 
-    def __init__(self, ip, maska, router):
-        self.ip = ip
-        self.maska = maska
+    def __init__(self, ether, subnet, router):
+        self.ether = ether
+        self.subnet = subnet
         self.router = router
 
     def add_ip(self):
 
         connection = ConnectHandler(**self.router)
 
-        interface = f"ether{self.ip + 1}"
-        address = f"192.168.{self.maska}.{self.ip}/24"
+        interface = f"ether{self.ether + 1}"
+        address = f"192.168.{self.subnet}.{self.ip}/24"
 
         # Хуучин IP устгах
         remove_command = (f"/ip address remove [find interface={interface}]")
@@ -68,9 +68,9 @@ for i in range(11, 14):
             A = IPAddress(t, t, router)
 
         elif i == 12:
-            A = IPAddress(t, i+20, router)
+            A = IPAddress(t, t+20, router)
 
         else:
-            A = IPAddress(t, i+40, router)
+            A = IPAddress(t, t+40, router)
 
         A.add_ip()
