@@ -28,7 +28,7 @@ class IPAddress:
         connection = ConnectHandler(**self.router)
 
         interface = f"ether{self.ip + 1}"
-        address = f"192.168.{self.maska}.{self.ip}/24"
+        address = f"192.168.{self.ip}.{self.maska}/24"
 
         # Хуучин IP устгах
         remove_command = (f"/ip address remove [find interface={interface}]")
@@ -65,12 +65,12 @@ for i in range(11, 14):
     for t in range(1, 8):
 
         if i == 11:
-            A = IPAddress(t, t, router)
+            A = IPAddress(t, 1, router)
 
         elif i == 12:
-            A = IPAddress(t, i+20, router)
+            A = IPAddress(t+50, 1, router)
 
         else:
-            A = IPAddress(t, i+40, router)
+            A = IPAddress(t+100, 1, router)
 
         A.add_ip()
