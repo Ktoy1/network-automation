@@ -17,7 +17,7 @@ for i in range(11, 14):
     for ip in range(1, 8):
         interface = f"ether{ip + 1}"
         address = f"192.168.{ip}.1/24"
-        remove = f"/ip address remove numbers={ip}"
+        remove = f"/ip address remove numbers=1"
 
         command = f"/ip address add address={address} interface={interface}"
 
