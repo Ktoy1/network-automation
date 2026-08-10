@@ -10,6 +10,5 @@ for i in range(11, 14):
     print(connection.send_command("/system identity print"))
     
     for ip in range(1, 8):
-        print(connection.send_command(f"/ip address add address=192.168.{ip}.1/24 interface=ether{ip+1}"))
-        
+        connection.send_command(f"/ip address add address=192.168.{ip}.1/24 interface=ether{ip+1}")
 
