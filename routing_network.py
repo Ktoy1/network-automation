@@ -15,16 +15,20 @@ for i in range(11, 14):
     print(connection.send_command("/system identity print"))
 
     for ip in range(1, 8):
+
         interface = f"ether{ip + 1}"
         address = f"192.168.{ip}.1/24"
-        remove = f"/ip address remove numbers=1"
 
+        # Тухайн interface дээрх хуучин IP-г устгана
+        remove = f"/ip address remove [find interface={interface}]"
+
+        # Шинэ IP нэмнэ
         command = f"/ip address add address={address} interface={interface}"
 
-        
         print(connection.send_command(remove))
-        print("хуучин хаягууд цэвэрлэгдсэн")
+        print(f"{interface} дээрх хуучин хаяг цэвэрлэгдлээ")
+
         print(connection.send_command(command))
-        print(f"{interface} дээр шинэ {address} ip хаяг амжилттай нэмэгдлээ")
+        print(f"{interface} дээр шинэ {address} IP амжилттай нэмэгдлээ")
 
     connection.disconnect()
