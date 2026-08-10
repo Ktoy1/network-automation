@@ -1,12 +1,8 @@
-
-ip_address = ['192.168.24.11', '192.168.23.1', '192.168.30.1'] 
-
-for i in ip_address:
+for i in range(11, 14):
     
     routers = {'device_type': 'mikrotik_routeros',
-            'host': i,
+            'host': f'10.10.10.{i}',
             'username': 'admin',
             'password': '123456',
             }
-
     print(routers)
