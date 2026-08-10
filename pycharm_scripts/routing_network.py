@@ -28,7 +28,7 @@ class IPAddress:
         connection = ConnectHandler(**self.router)
 
         interface = f"ether{self.ether + 1}"
-        address = f"192.168.{self.subnet}.{self.ip}/24"
+        address = f"192.168.{self.subnet}.1/24"
 
         # Хуучин IP устгах
         remove_command = (f"/ip address remove [find interface={interface}]")
