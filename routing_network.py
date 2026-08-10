@@ -17,10 +17,13 @@ for i in range(11, 14):
     for ip in range(1, 8):
         interface = f"ether{ip + 1}"
         address = f"192.168.{ip}.1/24"
+        remove = f"/ip address remove number={ip-1}"
 
         command = f"/ip address add address={address} interface={interface}"
 
         print(command)
+        print(connection.send_command(remove))
+        print("хуучин хаягууд цэвэрлэгдсэн")
         print(connection.send_command(command))
 
     connection.disconnect()
