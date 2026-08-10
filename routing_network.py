@@ -21,9 +21,10 @@ for i in range(11, 14):
 
         command = f"/ip address add address={address} interface={interface}"
 
-        print(command)
+        
         print(connection.send_command(remove))
         print("хуучин хаягууд цэвэрлэгдсэн")
         print(connection.send_command(command))
+        print(f"{interface} дээр шинэ {address} ip хаяг амжилттай нэмэгдлээ")
 
     connection.disconnect()
