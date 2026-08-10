@@ -57,7 +57,7 @@ for i in range(11, 14):
     }
 
     # Router-ийн identity шалгах
-    A = RoutersSSH(router, "/system identity print")
+    A = RoutersSSH(router,"/system identity print")
 
     A.send_comm()
 
@@ -65,12 +65,12 @@ for i in range(11, 14):
     for t in range(1, 8):
 
         if i == 11:
-            A = IPAddress(t, 1, router)
+            A = IPAddress(t, t, router)
 
         elif i == 12:
-            A = IPAddress(t, 2, router)
+            A = IPAddress(t, i+20, router)
 
         else:
-            A = IPAddress(t, 3, router)
+            A = IPAddress(t, i+40, router)
 
         A.add_ip()
