@@ -1,108 +1,114 @@
-from netmiko import ConnectHandler   # netmiko сангаас ConnectHandler-ийг импортлох
+from netmiko import ConnectHandler
 
-# Router-т зориулсан класс үүсгэх
 class Router:
-    # ssh-д зориулсан method үүсгэх
-    def __init__(self, host, user, passw):
+    def __init__(self, device, host, user, passw):
+        self.device = device
         self.host = host
         self.username = user
         self.password = passw
 
-    # төхөөрөмжид холбогдох method
-    def connect(self):
+    def get_connect(self):
         return ConnectHandler(
-            device_type = "mikrotik_routeros",
+            device_type = 'mikrotik_routeros',
             host = self.host,
             username = self.username,
-            password = self.password
+            password =  self.password
         )
 
-    def identity(self):
-        connection = self.connect()
-
+    def get_config(self, subnets):
         try:
-            return connection.send_command(
-                "/system identity print"
-            )
+            connect_router = self.connect()
+            connect_router.send_command(f'/system identity set name={self.device}', expect_string=r'>')
+            print(connect_router.send_command('system identity print'))
+
+            if self.device in subnets:
+                ether = 1
+                for ip in subnets[self.device]:
+                    ether += 1
+                    connect_router.send_command(f'/ip address add address={ip}'
+                                                f'interface={ether}'
+                                                )
 
         finally:
-            connection.disconnect()  
+            connect_router.disconnect()
 
-        # портууд дээр ip хаяг бичих команд method
-    def add_ip(self, interface, sub_address):
-        connection = self.connect()
-
+    def get_routing(self, route):
         try:
-            return connection.send_command(f"/ip address add address={sub_address} interface=ether{interface+1}")
+            connect_routing = self.connect()
+            for routers in route:
+                for dst in route[routers]:
+
+                    connect_routing.send_command(f'/ip route add dst-address={dst} gateway={routers[dst]}')
 
         finally:
-            connection.disconnect()
+            connect_routing.disconnect()
 
 
-    def routing(self, routes):
-        connection = self.connect()
 
-        try:
-            for i in routes:
 
-                command = (
-                    f"/ip route add "
-                    f"dst-address={i['distination']} "
-                    f"gateway={i['gateway']}"
-                )
+management = {}
+subnets = {}
+route = {
+    'router1':{'10.10.10.12':'192.168.16.0/20',
+               '10.10.10.13': '192.168.0.0/18',
+               '10.10.10.14': '192.168.32.0/19',
+               '10.10.10.15': '192.168.48.0/20',
+               '10.10.10.16': '192.168.0.0/17',
+               '10.10.10.17': '192.168.64.0/20'},
 
-                print(connection.send_command(command))
-        finally:
-            connection.disconnect()
+    'router2':{'10.10.10.11':'192.168.0.0/19',
+               '10.10.10.13': '192.168.0.0/18',
+               '10.10.10.14': '192.168.32.0/19',
+               '10.10.10.15': '192.168.48.0/20',
+               '10.10.10.16': '192.168.0.0/17',
+               '10.10.10.17': '192.168.64.0/20'},
+    'router3': {'10.10.10.12': '192.168.16.0/20',
+                '10.10.10.11': '192.168.0.0/19',
+                '10.10.10.14': '192.168.32.0/19',
+                '10.10.10.15': '192.168.48.0/20',
+                '10.10.10.16': '192.168.0.0/17',
+                '10.10.10.17': '192.168.64.0/20'},
 
-for i in range(11, 14):
+    'router4': {'10.10.10.11': '192.168.0.0/19',
+                '10.10.10.13': '192.168.0.0/19',
+                '10.10.10.12': '192.168.0.0/20',
+                '10.10.10.15': '192.168.48.0/20',
+                '10.10.10.16': '192.168.0.0/17',
+                '10.10.10.17': '192.168.64.0/20'},
+    'router5':{'10.10.10.11':'192.168.0.0/19',
+               '10.10.10.13': '192.168.0.0/18',
+               '10.10.10.14': '192.168.32.0/19',
+               '10.10.10.12': '192.168.16.0/20',
+               '10.10.10.16': '192.168.0.0/17',
+               '10.10.10.17': '192.168.64.0/20'},
+    'router6': {'10.10.10.12': '192.168.16.0/20',
+                '10.10.10.11': '192.168.0.0/19',
+                '10.10.10.14': '192.168.32.0/19',
+                '10.10.10.15': '192.168.48.0/20',
+                '10.10.10.13': '192.168.0.0/18',
+                '10.10.10.17': '192.168.64.0/20'},
+
+    'router7': {'10.10.10.11': '192.168.0.0/19',
+                '10.10.10.13': '192.168.0.0/19',
+                '10.10.10.12': '192.168.0.0/20',
+                '10.10.10.15': '192.168.48.0/20',
+                '10.10.10.16': '192.168.0.0/17',
+                '10.10.10.14': '192.168.32.0/19'}
+}
+
+for i in range(1, 8):
+    device_name = f'router{i}'
+    management[device_name] = [f'10.10.10.{10+i}', 'admin', '123456']
+    subnets[device_name] = [f'192.168.{(i*10)+ip}.1/24' for ip in range(1, 8)]
+
+for ss in management:
     router = Router(
-            f"10.10.10.{i}",
-            "admin",
-            "123456"
+        ss,
+        management[0],
+        management[1],
+        management[2]
     )
-    
-
-    #портуудад ip хаяг өгөх for давтамж 
-    for sub in range(1, 8):
-        if i == 11:
-            router.add_ip(sub, f"192.168.{sub}.1/24")
-        elif i == 12:
-            router.add_ip(sub, f"192.168.{sub+20}.1/24")
-        else:
-            router.add_ip(sub, f"192.168.{sub+40}.1/24")
-
-     router.identity()
-    # статик маршрут бичих cidr хаягууд болон тус бүрийн gateway-үүд
-    routes = [
-        {
-            'distination': '192.168.32.0/19',
-            'gateway': '10.10.10.13'
-
-        },
-        {
-            'distination': '192.168.16.0/20',
-            'gateway': '10.10.10.12'
-        },
-        {
-         'distination': '192.168.0.0/20',
-         'gateway': '10.10.10.11'
-        },
-        {
-            'distination': '192.168.32.0/19',
-            'gateway': '10.10.10.13'
-        },
-        {
-            'distination': '192.168.0.0/20',
-            'gateway': '10.10.10.11'
-        },
-        {
-            'distination': '192.168.16.0/20',
-            'gateway': '10.10.10.12'
-        }
+    #router.get_config(subnets)
+    router.get_routing(route)
 
 
-    ]
-
-
-    router.routing(routes)
