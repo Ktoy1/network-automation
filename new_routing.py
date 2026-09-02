@@ -2,9 +2,9 @@ import json as js
 from netmiko import ConnectHandler
 
 class RouterNetwork:
-    def __init__(self, username, host, password):
-        self.username = username
+    def __init__(self, host, username, password):
         self.host = host
+        self.username = username
         self.password = password
 
     def get_ssh(self):
@@ -17,7 +17,7 @@ class RouterNetwork:
         )
 
     def get_ip_routing(self, ip_addresses, static_route):
-
+        connect_config = None
         try:
             connect_config = self.get_ssh()
             for interface, ip_address in ip_addresses.items():
@@ -25,7 +25,12 @@ class RouterNetwork:
             for gateway, subnets in static_route.items():
                 connect_config.send_command(f'/ip route add dst-address={subnets} gateway={gateway}')
         finally:
-            connect_config.disconnect()
+            if connect_config:
+                try:
+                    connect_config.disconnect()
+                except Exception:
+                    # шаардлагатай бол лог бичээрэй
+                    print("холболтын алдаа")
 
 with open(r"ssh_data.json", "r", encoding="utf-8") as outfile:
     all_data = js.load(outfile)
@@ -39,5 +44,3 @@ with open(r"ssh_data.json", "r", encoding="utf-8") as outfile:
             data['ip_address'],
             data['static_route']
         )
-
-
